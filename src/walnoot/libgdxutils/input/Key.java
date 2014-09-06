@@ -47,7 +47,7 @@ public class Key implements Serializable {
 	
 	public boolean isTouched() {
 		for (int i = 0; i < keyCodes.size; i++) {
-			if (Gdx.input.isKeyJustPressed(keyCodes.get(i))) return true;
+			if (Gdx.input.isKeyPressed(keyCodes.get(i))) return true;
 		}
 		
 		return false;

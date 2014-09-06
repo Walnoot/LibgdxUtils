@@ -22,6 +22,14 @@ public class InputHandler extends InputAdapter {
 		new Json().toJson(this, file);
 	}
 	
+	public Key getKey(String name) {
+		for (Key key : keys) {
+			if (key.getName().equals(name)) return key;
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public boolean keyDown(int keycode) {
 		for (Key key : keys) {
@@ -33,5 +41,9 @@ public class InputHandler extends InputAdapter {
 	
 	public void addKey(Key key) {
 		keys.add(key);
+	}
+	
+	public Array<Key> getKeys() {
+		return keys;
 	}
 }

@@ -1,5 +1,7 @@
 package walnoot.libgdxutils;
 
+import com.badlogic.gdx.graphics.Color;
+
 public class State {
 	public StateApplication manager;
 	
@@ -15,13 +17,6 @@ public class State {
 	public void update() {
 	}
 	
-	/**
-	 * @return true if this state covers all states lower in the state stack.
-	 */
-	public boolean isOpaque() {
-		return false;
-	}
-	
 	public void render() {
 	}
 	
@@ -33,5 +28,9 @@ public class State {
 	
 	public float getDelta() {
 		return manager.getDelta();
+	}
+	
+	public Color getBackgroundColor() {
+		return Color.WHITE;
 	}
 }

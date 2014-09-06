@@ -2,9 +2,11 @@ package walnoot.libgdxutils;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 
-public class StateApplication extends ApplicationAdapter {
+public abstract class StateApplication extends ApplicationAdapter {
 	private Array<State> stateStack = new Array<State>();
 	
 	private float updateDelta;
@@ -15,23 +17,29 @@ public class StateApplication extends ApplicationAdapter {
 	}
 	
 	@Override
+	public void create() {
+		pushState(getFirstState());
+	}
+	
+	protected abstract State getFirstState();
+	
+	@Override
 	public void render() {
+		unprocessedSeconds += Gdx.graphics.getDeltaTime();
 		while (unprocessedSeconds > updateDelta) {
 			unprocessedSeconds -= updateDelta;
 			
 			update();
 		}
 		
-		int highestIndex = 0;
-		
-		for (int i = stateStack.size - 1; i >= 0; i--) {
-			if (stateStack.get(i).isOpaque()) {
-				highestIndex = i;
-				break;
-			}
+		if (stateStack.size > 0) {
+			Color col = stateStack.get(0).getBackgroundColor();
+			
+			Gdx.gl20.glClearColor(col.r, col.g, col.b, col.a);
+			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		}
 		
-		for (int i = highestIndex; i < stateStack.size; i++) {
+		for (int i = 0; i < stateStack.size; i++) {
 			stateStack.get(i).render();
 		}
 	}
