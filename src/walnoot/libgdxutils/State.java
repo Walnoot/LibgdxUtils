@@ -3,7 +3,13 @@ package walnoot.libgdxutils;
 import com.badlogic.gdx.graphics.Color;
 
 public class State {
-	public StateApplication manager;
+	protected StateApplication manager;
+	
+	/**
+	 * The stack that this state is part of, is null when not part of a
+	 * StackState.
+	 */
+	public StackState stack;
 	
 	public State() {
 	}
@@ -28,6 +34,10 @@ public class State {
 	
 	public float getDelta() {
 		return manager.getDelta();
+	}
+	
+	public void setManager(StateApplication manager) {
+		this.manager = manager;
 	}
 	
 	public Color getBackgroundColor() {
