@@ -1,7 +1,5 @@
 package walnoot.libgdxutils;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -16,6 +14,16 @@ public abstract class AnimatedState extends State {
 	
 	private float progress = 0f;
 	
+	private boolean updateInTransition;
+	
+	public AnimatedState() {
+		this(false);
+	}
+	
+	public AnimatedState(boolean updateInTransition) {
+		this.updateInTransition = updateInTransition;
+	}
+	
 	@Override
 	public void show() {
 		Matrix4 projection = new Matrix4();
@@ -25,12 +33,14 @@ public abstract class AnimatedState extends State {
 	
 	@Override
 	public final void update() {
+		if (updateInTransition) updateLogic();
+		
 		if (!shouldFadeOut()) {
 			progress += getDelta() / getDuration();
 			if (progress >= 1f) {
 				progress = 1f;
 				
-				updateLogic();
+				if (!updateInTransition) updateLogic();
 			}
 		} else {
 			progress -= getDelta() / getDuration();
@@ -45,13 +55,11 @@ public abstract class AnimatedState extends State {
 	}
 	
 	@Override
-	public void render() {
-		
+	public void render(FrameBuffer target) {
 		frameBuffer.begin();
-		Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		renderScene();
-		frameBuffer.end();
+		if (target == null) frameBuffer.end();
+		else target.begin();
 		
 		batch.begin();
 		batch.setColor(1f, 1f, 1f, transition.getAlpha());
@@ -84,7 +92,7 @@ public abstract class AnimatedState extends State {
 	}
 	
 	@Override
-	public void resize(int width, int height) {
+	public void resize(boolean creation, int width, int height) {
 		if (frameBuffer != null) frameBuffer.dispose();
 		frameBuffer = new FrameBuffer(Format.RGBA8888, width, height, true);
 	}

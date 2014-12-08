@@ -12,6 +12,7 @@ dependencies {
 }
 
 version = '1.0'
+sourceSets.main.java.srcDirs = [ "src/" ]
 
 jar {
 	manifest.attributes provider: 'walnoot'
