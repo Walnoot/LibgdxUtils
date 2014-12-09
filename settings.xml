@@ -1,4 +1,5 @@
-<profile>
+<settings>
+  <profile>
    <id>upstream</id>
    <repositories>
       <repository>
@@ -25,3 +26,4 @@
     </pluginRepository>
   </pluginRepositories>
 </profile>
+</settings>
