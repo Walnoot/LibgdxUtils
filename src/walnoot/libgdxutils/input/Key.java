@@ -53,7 +53,6 @@ public class Key implements Serializable {
 		return false;
 	}
 	
-	@Override
 	public void write(Json json) {
 		json.writeValue("name", name);
 		json.writeArrayStart("keycodes");
@@ -63,7 +62,6 @@ public class Key implements Serializable {
 		json.writeArrayEnd();
 	}
 	
-	@Override
 	public void read(Json json, JsonValue jsonData) {
 		name = jsonData.getString("name");
 		

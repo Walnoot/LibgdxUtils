@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public abstract class StateApplication extends ApplicationAdapter {
-	private static final String[] TIME_SUFFIXES = { "nanos", "micros", "millis", "seconds" };
-	
 	private State state;
 	
 	private float updateDelta;
