@@ -26,9 +26,9 @@ public class BlurEffect {
 	
 	private int dirLocation;
 	
-	float downScale = 16f;
+	float downScale = 4f;
 	
-	private FrameBuffer target;
+	private RenderContext context;
 	
 	private Color tint = Color.WHITE;
 	
@@ -46,13 +46,14 @@ public class BlurEffect {
 		batch.setProjectionMatrix(cam.combined);
 	}
 	
-	public void begin(FrameBuffer target) {
+	public void begin(RenderContext renderContext) {
 		if (isActive()) throw new IllegalStateException("Need to call end() before begin()");
 		
-		this.target = target;
+		this.context = renderContext;
 		
 		//Start rendering to an offscreen color buffer
-		blurTargetA.begin();
+//		blurTargetA.begin();
+		context.setCurrentTarget(blurTargetA);
 		
 		//before rendering, ensure we are using the default shader
 		batch.setShader(null);
@@ -67,7 +68,8 @@ public class BlurEffect {
 	public void end() {
 		batch.flush();
 		
-		blurTargetA.end();
+//		blurTargetA.end();
+		context.endCurruntTarget();
 		genMipMaps(blurTargetA);
 		
 		//start blurring the offscreen image
@@ -75,7 +77,8 @@ public class BlurEffect {
 		shader.setUniformf(dirLocation, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth(), 0f);//x axis
 //		shader.setUniformf(dirLocation, 0f, 0f);
 		
-		blurTargetB.begin();
+//		blurTargetB.begin();
+		context.setCurrentTarget(blurTargetB);
 		
 		fboRegion.setTexture(blurTargetA.getColorBufferTexture());
 		
@@ -83,8 +86,9 @@ public class BlurEffect {
 		
 		batch.flush();
 		
-		if (target == null) blurTargetB.end();
-		else target.begin();
+//		if (context == null) blurTargetB.end();
+//		else context.begin();
+		context.endCurruntTarget();
 		
 		//update our projection matrix with the screen size
 		resizeBatch(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -101,7 +105,7 @@ public class BlurEffect {
 		batch.setShader(null);
 		batch.end();
 		
-		target = null;
+		context = null;
 	}
 	
 	private void genMipMaps(FrameBuffer buffer) {
@@ -134,7 +138,7 @@ public class BlurEffect {
 	}
 	
 	public boolean isActive() {
-		return target != null;
+		return context != null;
 	}
 	
 	public FrameBuffer getRenderTarget() {

@@ -3,7 +3,6 @@ package walnoot.libgdxutils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public class State {
 	protected StateApplication manager;
@@ -20,13 +19,7 @@ public class State {
 	public void update() {
 	}
 	
-	/**
-	 * @param target
-	 *            - The framebuffer the state should render to, or null if
-	 *            rendering to the screen. Can be ignored if the State does not
-	 *            render to framebuffers.
-	 */
-	public void render(FrameBuffer target) {
+	public void render() {
 	}
 	
 	/**
@@ -50,5 +43,13 @@ public class State {
 	
 	public int getClearBits() {
 		return GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT;
+	}
+	
+	/**
+	 * @return a list of states that this State manages and wants rendered.
+	 *         Returns null if none.
+	 */
+	public State[] getManagedStates() {
+		return null;
 	}
 }

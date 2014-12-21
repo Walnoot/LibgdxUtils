@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Array;
 
 public abstract class StateApplication extends ApplicationAdapter {
 	private State state;
@@ -19,6 +20,8 @@ public abstract class StateApplication extends ApplicationAdapter {
 	private int updateTimesIndex, renderTimesIndex;
 	private BitmapFont font;
 	private SpriteBatch batch;
+	
+	private RenderContext renderContext = new RenderContext();
 	
 	private int currentLine;//current line of the debug text
 	
@@ -64,7 +67,7 @@ public abstract class StateApplication extends ApplicationAdapter {
 		
 		long startTime = System.nanoTime();
 		
-		state.render(null);
+		state.render();
 		
 		renderTimes[renderTimesIndex] = (int) (System.nanoTime() - startTime);
 		renderTimesIndex = (renderTimesIndex + 1) % renderTimes.length;
@@ -127,28 +130,50 @@ public abstract class StateApplication extends ApplicationAdapter {
 		updateTimesIndex = (updateTimesIndex + 1) % updateTimes.length;
 	}
 	
-	public void setState(State state) {
-		setState(state, true);
+	public void setState(State newState) {
+		State oldState = this.state;
+		this.state = newState;
+		
+		Array<State> oldStates = new Array<State>(false, 4), newStates = new Array<State>(false, 4);
+		fillStateList(oldStates, oldState);
+		fillStateList(newStates, newState);
+		
+		//hide any state that's no longer rendered
+		for (State s : oldStates) {
+			if (!newStates.contains(s, true)) {
+				s.hide();
+			}
+		}
+		
+		//init any state that wasn't rendered before
+		for (State s : newStates) {
+			if (!oldStates.contains(s, true)) {
+				s.setManager(this);//the state might not have a reference to this instance yet
+				s.show();
+				s.resize(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			}
+		}
 	}
 	
-	void setState(State state, boolean show) {
-		if (this.state != null) this.state.hide();
-		
-		this.state = state;
-		state.setManager(this);
-		
-		if (show) {
-			state.show();
-			state.resize(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	/**
+	 * Fills the specified list with the state and its managed states,
+	 * recursively.
+	 */
+	private void fillStateList(Array<State> states, State state) {
+		if (state != null) {
+			states.add(state);
+			
+			State[] managedStates = state.getManagedStates();
+			if (managedStates != null) {
+				for (int i = 0; i < managedStates.length; i++) {
+					fillStateList(states, managedStates[i]);
+				}
+			}
 		}
 	}
 	
 	public void transitionTo(State newState, Transition transition) {
-		state = new TransitionState(state, newState, transition);
-		state.setManager(this);
-		
-		state.show();
-		state.resize(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		setState(new TransitionState(state, newState, transition));
 	}
 	
 	@Override
@@ -161,6 +186,14 @@ public abstract class StateApplication extends ApplicationAdapter {
 		
 		if (!firstTimeResize) state.resize(false, width, height);
 		firstTimeResize = false;
+	}
+	
+	public State getCurrentState() {
+		return state;
+	}
+	
+	public RenderContext getRenderContext() {
+		return renderContext;
 	}
 	
 	public float getDelta() {

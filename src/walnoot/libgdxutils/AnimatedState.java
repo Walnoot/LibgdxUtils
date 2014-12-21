@@ -55,11 +55,10 @@ public abstract class AnimatedState extends State {
 	}
 	
 	@Override
-	public void render(FrameBuffer target) {
-		frameBuffer.begin();
+	public void render() {
+		manager.getRenderContext().setCurrentTarget(frameBuffer);
 		renderScene();
-		if (target == null) frameBuffer.end();
-		else target.begin();
+		manager.getRenderContext().endCurruntTarget();
 		
 		batch.begin();
 		batch.setColor(1f, 1f, 1f, transition.getAlpha());

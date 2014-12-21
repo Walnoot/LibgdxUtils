@@ -1,6 +1,5 @@
 package walnoot.libgdxutils;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,14 +29,14 @@ public class TransitionState extends State {
 	@Override
 	public void update() {
 		timeLeft -= getDelta();
-		if (timeLeft <= 0f) manager.setState(endState, false);
+		if (timeLeft <= 0f) manager.setState(endState);
 		
 		if (transition.updateStartState) startState.update();
 		if (transition.updateEndState) endState.update();
 	}
 	
 	@Override
-	public void render(FrameBuffer target) {
+	public void render() {
 		if (transition.updateStartState || dirty) renderToBuffer(startBuffer, startState);
 		if (transition.updateEndState || dirty) renderToBuffer(endBuffer, endState);
 		dirty = false;
@@ -50,9 +49,9 @@ public class TransitionState extends State {
 	}
 	
 	private void renderToBuffer(FrameBuffer buffer, State state) {
-		buffer.begin();
-		state.render(buffer);
-		buffer.end();
+		manager.getRenderContext().setCurrentTarget(buffer);
+		state.render();
+		manager.getRenderContext().endCurruntTarget();
 	}
 	
 	@Override
@@ -85,8 +84,6 @@ public class TransitionState extends State {
 	
 	@Override
 	public void show() {
-		endState.show();
-		endState.resize(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 	
 	@Override
@@ -96,8 +93,6 @@ public class TransitionState extends State {
 		
 		startBuffer = null;
 		endBuffer = null;
-		
-		startState.hide();
 	}
 	
 	@Override
@@ -106,5 +101,10 @@ public class TransitionState extends State {
 		
 		startState.setManager(manager);
 		endState.setManager(manager);
+	}
+	
+	@Override
+	public State[] getManagedStates() {
+		return new State[] { startState, endState };
 	}
 }

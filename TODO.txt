@@ -1,0 +1,4 @@
+-automated builds/maven repo
+-variable blur
+-combining effects, ping pong fbo?
+-AABB collision?

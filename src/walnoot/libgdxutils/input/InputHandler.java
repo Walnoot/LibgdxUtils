@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Json;
 
 public class InputHandler extends InputAdapter {
 	private Array<Key> keys = new Array<Key>();
-	private Camera camera;
 	
 	private Vector3 tmp = new Vector3();
 	
@@ -37,13 +36,7 @@ public class InputHandler extends InputAdapter {
 		return null;
 	}
 	
-	public void setCamera(Camera camera) {
-		this.camera = camera;
-	}
-	
-	public Vector2 getMousePosition(Vector2 result) {
-		if (camera == null) throw new IllegalStateException("Camera needs to be set in order to get world coords");
-		
+	public Vector2 getMousePosition(Camera camera, Vector2 result) {
 		tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
 		camera.unproject(tmp);
 		
