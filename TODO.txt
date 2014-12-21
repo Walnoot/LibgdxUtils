@@ -1,3 +1,4 @@
+-fix github hook
 -variable blur
 -combining effects, ping pong fbo?
 -AABB collision?
