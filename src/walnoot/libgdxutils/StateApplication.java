@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.utils.Array;
 
 public abstract class StateApplication extends ApplicationAdapter {
@@ -44,6 +45,8 @@ public abstract class StateApplication extends ApplicationAdapter {
 			font = new BitmapFont();
 			font.setFixedWidthGlyphs("1234567890");
 			batch = new SpriteBatch();
+			
+			GLProfiler.enable();
 		}
 		
 		init();
@@ -74,6 +77,8 @@ public abstract class StateApplication extends ApplicationAdapter {
 		
 		if (debug && Gdx.input.isKeyPressed(Keys.F1)) drawDebug();
 		if (debug && Gdx.input.isKeyPressed(getExitKey())) Gdx.app.exit();
+		
+		GLProfiler.reset();
 	}
 	
 	protected int getExitKey() {

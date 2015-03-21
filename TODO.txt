@@ -1,4 +1,5 @@
--fix github hook
 -variable blur
 -combining effects, ping pong fbo?
 -AABB collision?
+-dont reload shader with every BlurEffect instance
+-clean up Transition stuff + AnimatedState

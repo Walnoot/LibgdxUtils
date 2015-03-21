@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class BlurEffect {
-	private static final float BLUR_FACTOR = 4f;
+	private static final float BLUR_FACTOR = 4f;//shader samples 4 pixels in either direction
 	
 	private FrameBuffer blurTargetA, blurTargetB;
 	private TextureRegion fboRegion;
@@ -26,7 +26,7 @@ public class BlurEffect {
 	
 	private int dirLocation;
 	
-	float downScale = 4f;
+	float downScale = 1f;
 	
 	private RenderContext context;
 	
@@ -52,7 +52,6 @@ public class BlurEffect {
 		this.context = renderContext;
 		
 		//Start rendering to an offscreen color buffer
-//		blurTargetA.begin();
 		context.setCurrentTarget(blurTargetA);
 		
 		//before rendering, ensure we are using the default shader
@@ -68,38 +67,40 @@ public class BlurEffect {
 	public void end() {
 		batch.flush();
 		
-//		blurTargetA.end();
 		context.endCurruntTarget();
 		genMipMaps(blurTargetA);
 		
 		//start blurring the offscreen image
 		batch.setShader(shader);
-		shader.setUniformf(dirLocation, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth(), 0f);//x axis
+//		shader.setUniformf(dirLocation, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth(), 0f);//x axis
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
+		
+		shader.setUniformf(dirLocation, (BLUR_FACTOR * downScale) / width, 0f);//x axis
 //		shader.setUniformf(dirLocation, 0f, 0f);
 		
-//		blurTargetB.begin();
 		context.setCurrentTarget(blurTargetB);
 		
 		fboRegion.setTexture(blurTargetA.getColorBufferTexture());
 		
-		batch.draw(fboRegion, 0, 0);
+//		batch.draw(fboRegion, 0, 0);
+		batch.draw(fboRegion, 0, 0, width / downScale, height / downScale);
 		
 		batch.flush();
 		
-//		if (context == null) blurTargetB.end();
-//		else context.begin();
 		context.endCurruntTarget();
 		
 		//update our projection matrix with the screen size
-		resizeBatch(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		resizeBatch(width, height);
 		
-		shader.setUniformf(dirLocation, 0f, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth());//y axis
+//		shader.setUniformf(dirLocation, 0f, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth());//y axis
+		shader.setUniformf(dirLocation, 0f, (BLUR_FACTOR) / width);//y axis
 //		shader.setUniformf(dirLocation, 0f, 0f);
 		
 		//draw target B to the screen with a vertical blur effect 
 		fboRegion.setTexture(blurTargetB.getColorBufferTexture());
 		batch.setColor(tint);
-		batch.draw(fboRegion, 0, 0);
+		batch.draw(fboRegion, 0, 0, width * downScale, height * downScale);
 		batch.setColor(Color.WHITE);
 		
 		batch.setShader(null);
@@ -117,8 +118,10 @@ public class BlurEffect {
 		if (blurTargetA != null) blurTargetA.dispose();
 		if (blurTargetB != null) blurTargetB.dispose();
 		
+//		blurTargetA = new MipMapFrameBuffer(Format.RGBA8888, width, height, true);
+//		blurTargetB = new FrameBuffer(Format.RGBA8888, (int) (width / downScale), (int) (width / downScale), false);
 		blurTargetA = new MipMapFrameBuffer(Format.RGBA8888, width, height, true);
-		blurTargetB = new FrameBuffer(Format.RGBA8888, (int) (width / downScale), (int) (width / downScale), false);
+		blurTargetB = new FrameBuffer(Format.RGBA8888, width, height, true);
 		
 		fboRegion = new TextureRegion(blurTargetA.getColorBufferTexture());
 		fboRegion.flip(false, true);
@@ -129,6 +132,10 @@ public class BlurEffect {
 	
 	public void setTint(Color tint) {
 		this.tint = tint;
+	}
+	
+	public void setDownScale(float downScale) {
+		this.downScale = downScale;
 	}
 	
 	public void dispose() {
