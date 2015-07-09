@@ -177,6 +177,10 @@ public abstract class StateApplication extends ApplicationAdapter {
 		}
 	}
 	
+	public void transitionTo(State newState, float fadeTime) {
+		transitionTo(newState, new Transition.FadeTransition(fadeTime));
+	}
+	
 	public void transitionTo(State newState, Transition transition) {
 		setState(new TransitionState(state, newState, transition));
 	}
