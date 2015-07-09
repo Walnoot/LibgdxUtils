@@ -27,9 +27,10 @@ public abstract class StateApplication extends ApplicationAdapter {
 	private int currentLine;//current line of the debug text
 	
 	private boolean debug;
+	private boolean debugActive;
 	
 	private boolean firstTimeResize = true;
-	
+
 	public StateApplication(float updateFPS) {
 		this(updateFPS, false);
 	}
@@ -75,7 +76,8 @@ public abstract class StateApplication extends ApplicationAdapter {
 		renderTimes[renderTimesIndex] = (int) (System.nanoTime() - startTime);
 		renderTimesIndex = (renderTimesIndex + 1) % renderTimes.length;
 		
-		if (debug && Gdx.input.isKeyPressed(Keys.F1)) drawDebug();
+		if(Gdx.input.isKeyJustPressed(Keys.F1)) debugActive = !debugActive;
+		if (debug && debugActive) drawDebug();
 		if (debug && Gdx.input.isKeyPressed(getExitKey())) Gdx.app.exit();
 		
 		GLProfiler.reset();
