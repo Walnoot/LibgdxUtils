@@ -99,6 +99,8 @@ public abstract class StateApplication extends ApplicationAdapter {
 		font.draw(batch, "Update time (peak): " + getPeak(updateTimes), 0f, getNextLineHeight());
 		font.draw(batch, FrameBuffer.getManagedStatus(), 0f, getNextLineHeight());
 		font.draw(batch, Texture.getManagedStatus(), 0f, getNextLineHeight());
+		font.draw(batch, "Java heap: " + (Gdx.app.getJavaHeap() << 10) + " kB", 0f, getNextLineHeight());
+		font.draw(batch, "Native heap: " + (Gdx.app.getNativeHeap() << 10) + " kB", 0f, getNextLineHeight());
 		batch.end();
 	}
 	
