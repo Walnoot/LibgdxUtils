@@ -14,8 +14,6 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class BlurEffect {
-	private static final float BLUR_FACTOR = 4f;//shader samples 4 pixels in either direction
-	
 	private FrameBuffer blurTargetA, blurTargetB;
 	private TextureRegion fboRegion;
 	
@@ -27,6 +25,7 @@ public class BlurEffect {
 	private int dirLocation;
 	
 	float downScale = 1f;
+	private float blurFactor = 4f;//shader samples 4 pixels in either direction
 	
 	private RenderContext context;
 	
@@ -76,7 +75,7 @@ public class BlurEffect {
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
 		
-		shader.setUniformf(dirLocation, (BLUR_FACTOR * downScale) / width, 0f);//x axis
+		shader.setUniformf(dirLocation, (blurFactor * downScale) / width, 0f);//x axis
 //		shader.setUniformf(dirLocation, 0f, 0f);
 		
 		context.setCurrentTarget(blurTargetB);
@@ -94,7 +93,7 @@ public class BlurEffect {
 		resizeBatch(width, height);
 		
 //		shader.setUniformf(dirLocation, 0f, (BLUR_FACTOR * downScale) / Gdx.graphics.getWidth());//y axis
-		shader.setUniformf(dirLocation, 0f, (BLUR_FACTOR) / width);//y axis
+		shader.setUniformf(dirLocation, 0f, (blurFactor) / width);//y axis
 //		shader.setUniformf(dirLocation, 0f, 0f);
 		
 		//draw target B to the screen with a vertical blur effect 
@@ -136,6 +135,10 @@ public class BlurEffect {
 	
 	public void setDownScale(float downScale) {
 		this.downScale = downScale;
+	}
+	
+	public void setBlurFactor(float blurFactor) {
+		this.blurFactor = blurFactor;
 	}
 	
 	public void dispose() {
