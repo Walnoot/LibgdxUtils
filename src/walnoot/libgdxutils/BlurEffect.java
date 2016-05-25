@@ -161,10 +161,13 @@ public class BlurEffect {
 		}
 		
 		@Override
-		protected void setupTexture() {
-			colorTexture = new Texture(width, height, format);
+		protected Texture createColorTexture() {
+			Texture colorTexture = super.createColorTexture();
+			
 			colorTexture.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 			colorTexture.setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+			
+			return colorTexture;
 		}
 	}
 }

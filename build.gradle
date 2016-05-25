@@ -1,0 +1,26 @@
+/*buildscript {
+  repositories {
+     mavenCentral()
+  }
+
+  dependencies {
+     classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+  }
+}
+
+// Required because retrolambda is on maven central
+repositories {
+  mavenCentral()
+}
+
+apply plugin: 'java' //or apply plugin: 'java'
+apply plugin: 'me.tatarka.retrolambda'*/
+
+sourceSets {
+    java {
+        srcDir 'src/java'
+    }
+}
+
+apply plugin: 'java'
+sourceSets.main.java.srcDirs = [ "src/" ]
