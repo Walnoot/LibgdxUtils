@@ -1,7 +1,7 @@
 LibgdxUtils
 ===========
 
-This is my hacky, undocumented library to go with LibGDX. This is mostly a collection of code I used to write at the start of every gamejam, that I have now compiled into this package to make my life a bit easier.
+This is my very hacky, undocumented library to go with LibGDX. This is mostly a collection of code I used to write at the start of every gamejam, that I have now compiled into this package to make my life a bit easier.
 
 **Building Code**
 
